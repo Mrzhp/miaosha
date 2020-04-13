@@ -1,25 +1,24 @@
 package com.example.demo.Controller;
 
-import com.example.demo.Mapper.mappertest;
-import com.example.demo.Pojo.Item;
+
+import com.example.demo.Error.BusinessException;
+import com.example.demo.Error.EmBusinessError;
+import com.example.demo.Pojo.UserInfo;
+import com.example.demo.Service.imp.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class LoginController {
-
+@RequestMapping(value = "/user",produces = "application/json; charset=utf-8")
+public class LoginController extends BaseController{
     @Autowired
-    private mappertest mappertest;
-
-    @GetMapping("/")
-    public Item testSql(){
-        Item  item = mappertest.getItemById(6);
-        if(item == null)
-        {
-            System.out.println("垃圾");
-            return null;
+    UserServiceImp userServiceImp;
+    @GetMapping("/currentuser")
+    public UserInfo getUserInfo(@RequestParam(name = "id")Integer id) throws BusinessException {
+        UserInfo userInfoById = userServiceImp.getUserInfoById(id);
+        if(userInfoById == null){
+            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
         }
-        return item;
+        return userInfoById;
     }
 }
